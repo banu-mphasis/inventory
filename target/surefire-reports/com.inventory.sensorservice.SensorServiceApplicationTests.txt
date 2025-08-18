@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.inventory.sensorservice.SensorServiceApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.349 s - in com.inventory.sensorservice.SensorServiceApplicationTests

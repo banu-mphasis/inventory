@@ -1,0 +1,6 @@
+com/inventory/sensorservice/service/SensorService.class
+com/inventory/sensorservice/model/SensorStatus.class
+com/inventory/sensorservice/SensorServiceApplication.class
+com/inventory/sensorservice/repository/SensorReadingRepository.class
+com/inventory/sensorservice/controller/SensorController.class
+com/inventory/sensorservice/model/SensorReading.class
