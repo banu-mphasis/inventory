@@ -1,0 +1,14 @@
+---
+applications:
+- name: sensor-service
+  memory: 1G
+  instances: 1
+  path: target/sensor-service-1.0.0.jar
+  buildpacks:
+    - java_buildpack
+  env:
+    JAVA_OPTS: '-Djava.security.egd=file:///dev/urandom -Xmx768m'
+    SERVER_PORT: 8080
+  services: []
+  routes:
+  - route: sensor-service-${random-word}.apps.tas-ndc.kuhn-labs.com
