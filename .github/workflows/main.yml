@@ -97,22 +97,13 @@ jobs:
         fi
         
     - name: Login to Cloud Foundry
-      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: |
         cf login -a "${{ secrets.CF_API_URL }}" -u "${{ secrets.CF_USERNAME }}" -p "${{ secrets.CF_PASSWORD }}" -o "${{ secrets.CF_ORG }}" -s "${{ secrets.CF_SPACE }}"
         
-    - name: Skip deployment due to missing secrets
-      if: ${{ secrets.CF_API_URL == '' || secrets.CF_USERNAME == '' || secrets.CF_PASSWORD == '' || secrets.CF_ORG == '' || secrets.CF_SPACE == '' }}
-      run: |
-        echo "⚠️ Skipping deployment: One or more required secrets are not configured"
-        echo "Please ensure all CF_* secrets are properly set in repository settings"
-        
     - name: Verify CF target
-      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: cf target
         
     - name: Deploy to Cloud Foundry
-      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: |
         echo "Deploying application..."
         cf push -f manifest.yml
