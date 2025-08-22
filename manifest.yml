@@ -9,6 +9,4 @@ applications:
   env:
     JAVA_OPTS: '-Djava.security.egd=file:///dev/urandom -Xmx768m'
     SERVER_PORT: 8080
-  services: []
-  routes:
-  - route: sensor-service-${random-word}.apps.tas-ndc.kuhn-labs.com
+  random-route: true

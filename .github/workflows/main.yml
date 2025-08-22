@@ -46,6 +46,13 @@ jobs:
         name: sensor-service-jar
         path: target/
         
+    - name: Verify JAR file exists
+      run: |
+        echo "Listing target directory contents:"
+        ls -la target/
+        echo "Looking for JAR files:"
+        find target/ -name "*.jar" -type f
+        
     - name: Install Cloud Foundry CLI
       run: |
         wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
@@ -56,21 +63,56 @@ jobs:
     - name: Verify CF CLI installation
       run: cf version
         
-    - name: Debug secrets (masked)
+    - name: Debug secrets availability
       run: |
-        echo "API URL is set: ${{ secrets.CF_API_URL != '' }}"
-        echo "Username is set: ${{ secrets.CF_USERNAME != '' }}"
-        echo "Password is set: ${{ secrets.CF_PASSWORD != '' }}"
-        echo "Org is set: ${{ secrets.CF_ORG != '' }}"
-        echo "Space is set: ${{ secrets.CF_SPACE != '' }}"
+        echo "Checking secret availability..."
+        if [ -z "${{ secrets.CF_API_URL }}" ]; then
+          echo "CF_API_URL is empty or not set"
+        else
+          echo "CF_API_URL is available"
+        fi
+        
+        if [ -z "${{ secrets.CF_USERNAME }}" ]; then
+          echo "CF_USERNAME is empty or not set"
+        else
+          echo "CF_USERNAME is available"
+        fi
+        
+        if [ -z "${{ secrets.CF_PASSWORD }}" ]; then
+          echo "CF_PASSWORD is empty or not set"
+        else
+          echo "CF_PASSWORD is available"
+        fi
+        
+        if [ -z "${{ secrets.CF_ORG }}" ]; then
+          echo "CF_ORG is empty or not set"
+        else
+          echo "CF_ORG is available"
+        fi
+        
+        if [ -z "${{ secrets.CF_SPACE }}" ]; then
+          echo "CF_SPACE is empty or not set"
+        else
+          echo "CF_SPACE is available"
+        fi
         
     - name: Login to Cloud Foundry
+      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: |
         cf login -a "${{ secrets.CF_API_URL }}" -u "${{ secrets.CF_USERNAME }}" -p "${{ secrets.CF_PASSWORD }}" -o "${{ secrets.CF_ORG }}" -s "${{ secrets.CF_SPACE }}"
         
+    - name: Skip deployment due to missing secrets
+      if: ${{ secrets.CF_API_URL == '' || secrets.CF_USERNAME == '' || secrets.CF_PASSWORD == '' || secrets.CF_ORG == '' || secrets.CF_SPACE == '' }}
+      run: |
+        echo "⚠️ Skipping deployment: One or more required secrets are not configured"
+        echo "Please ensure all CF_* secrets are properly set in repository settings"
+        
     - name: Verify CF target
+      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: cf target
         
     - name: Deploy to Cloud Foundry
+      if: ${{ secrets.CF_API_URL != '' && secrets.CF_USERNAME != '' && secrets.CF_PASSWORD != '' && secrets.CF_ORG != '' && secrets.CF_SPACE != '' }}
       run: |
+        echo "Deploying application..."
         cf push -f manifest.yml
