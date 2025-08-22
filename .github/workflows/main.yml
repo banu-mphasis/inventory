@@ -53,9 +53,23 @@ jobs:
         sudo apt-get update
         sudo apt-get install cf8-cli
         
+    - name: Verify CF CLI installation
+      run: cf version
+        
+    - name: Debug secrets (masked)
+      run: |
+        echo "API URL is set: ${{ secrets.CF_API_URL != '' }}"
+        echo "Username is set: ${{ secrets.CF_USERNAME != '' }}"
+        echo "Password is set: ${{ secrets.CF_PASSWORD != '' }}"
+        echo "Org is set: ${{ secrets.CF_ORG != '' }}"
+        echo "Space is set: ${{ secrets.CF_SPACE != '' }}"
+        
     - name: Login to Cloud Foundry
       run: |
-        cf login -a ${{ secrets.CF_API_URL }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }} -o ${{ secrets.CF_ORG }} -s ${{ secrets.CF_SPACE }}
+        cf login -a "${{ secrets.CF_API_URL }}" -u "${{ secrets.CF_USERNAME }}" -p "${{ secrets.CF_PASSWORD }}" -o "${{ secrets.CF_ORG }}" -s "${{ secrets.CF_SPACE }}"
+        
+    - name: Verify CF target
+      run: cf target
         
     - name: Deploy to Cloud Foundry
       run: |
